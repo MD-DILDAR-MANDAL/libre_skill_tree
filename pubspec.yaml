@@ -7,6 +7,7 @@ environment:
   sdk: ^3.10.0
 
 dependencies:
+  build_runner: ^2.7.1
   dio: ^5.9.0
   equatable: ^2.0.7
   flutter:
@@ -14,9 +15,14 @@ dependencies:
   flutter_bloc: ^9.1.1
   get_it: ^9.2.0
   graphx: ^1.0.14
+
+  isar_community: ^3.3.0
+  isar_community_flutter_libs: ^3.3.0
+
   supabase_flutter: ^2.10.3
 
 dev_dependencies:
+  isar_community_generator: ^3.3.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

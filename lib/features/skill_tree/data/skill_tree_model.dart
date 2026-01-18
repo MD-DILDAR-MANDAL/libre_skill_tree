@@ -1,40 +1,69 @@
+import 'package:isar_community/isar.dart';
+
+part 'skill_tree_model.g.dart';
+
+@Collection()
 class SkillTreeModel {
-  final String id;
-  final String name;
-  final List<SkillNodeModel> nodes;
-  final List<SkillEdgeModel> edges;
+  Id id = Isar.autoIncrement;
+
+  late String name;
+  late List<SkillNodeModel> nodes;
+  late List<SkillEdgeModel> edges;
 
   SkillTreeModel({
-    required this.id,
     required this.name,
     required this.nodes,
     required this.edges,
   });
+
+  // For JSON Export
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'nodes': nodes.map((e) => e.toJson()).toList(),
+    'edges': edges.map((e) => e.toJson()).toList(),
+  };
 }
 
+@embedded
 class SkillNodeModel {
-  final String id;
-  final String title;
-  final double x;
-  final double y;
-  final int level;
-  final int maxLevel;
-  final bool locked;
+  late String id;
+  late String title;
+  late double x;
+  late double y;
+  late int level;
+  late int maxLevel;
+  late bool locked;
 
   SkillNodeModel({
-    required this.id,
-    required this.title,
-    required this.x,
-    required this.y,
+    this.id = '',
+    this.title = '',
+    this.x = 0,
+    this.y = 0,
     this.level = 0,
     this.maxLevel = 5,
     this.locked = true,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'x': x,
+    'y': y,
+    'level': level,
+    'locked': locked,
+  };
 }
 
+@embedded
 class SkillEdgeModel {
-  final String fromNodeId;
-  final String toNodeId;
+  late String fromNodeId;
+  late String toNodeId;
 
-  SkillEdgeModel({required this.fromNodeId, required this.toNodeId});
+  SkillEdgeModel({this.fromNodeId = '', this.toNodeId = ''});
+
+  Map<String, dynamic> toJson() => {
+    'fromNodeId': fromNodeId,
+    'toNodeId': toNodeId,
+  };
 }
