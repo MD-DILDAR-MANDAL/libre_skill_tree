@@ -4,22 +4,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="chore: isar model">
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Inter_28pt-Bold.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Inter_28pt-Medium.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Inter_28pt-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Oxanium-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/fonts/Oxanium-SemiBold.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="feat:add font and design">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/home/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/home/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/data/skill_tree_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/data/skill_tree_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/my_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/my_app.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768745361351</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat:add font and design">
+      <option name="closed" value="true" />
+      <created>1768941604321</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1768941604321</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -141,6 +135,7 @@
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
     <MESSAGE value="feat: add child node,auto alignment, isar storage" />
     <MESSAGE value="chore: isar model" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore: isar model" />
+    <MESSAGE value="feat:add font and design" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat:add font and design" />
   </component>
 </project>
