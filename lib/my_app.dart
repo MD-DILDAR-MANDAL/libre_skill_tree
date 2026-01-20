@@ -20,13 +20,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Inter'),
       home: AppNavigation(repository: widget.repository),
     );
   }
 }
 
 class AppNavigation extends StatefulWidget {
-  final SkillTreeRepository repository; // 1. Add this field
+  final SkillTreeRepository repository;
   const AppNavigation({super.key, required this.repository});
 
   @override
@@ -56,6 +57,19 @@ class _AppNavigationState extends State<AppNavigation> {
             label: 'Profile',
           ),
         ],
+        selectedIndex: currentPageIndex,
+        labelTextStyle: WidgetStateProperty<TextStyle>.fromMap(
+          <WidgetStatesConstraint, TextStyle>{
+            WidgetState.selected: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            WidgetState.any: TextStyle(
+              color: Colors.blueGrey,
+              fontWeight: FontWeight.bold,
+            ),
+          },
+        ),
       ),
       body: <Widget>[
         HomeScreen(),

@@ -1,5 +1,5 @@
 name: libre_skill_tree
-description: "A new Flutter project."
+description: "skill tree of life"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -29,3 +29,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/fonts/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter_28pt-Regular.ttf
+        - asset: assets/fonts/Inter_28pt-Medium.ttf
+        - asset: assets/fonts/Inter_28pt-Bold.ttf
+
+    - family: Oxanium
+      fonts:
+        - asset: assets/fonts/Oxanium-Regular.ttf
+        - asset: assets/fonts/Oxanium-SemiBold.ttf

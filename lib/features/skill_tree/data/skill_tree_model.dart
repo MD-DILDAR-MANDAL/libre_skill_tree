@@ -41,7 +41,7 @@ class SkillNodeModel {
     this.x = 0,
     this.y = 0,
     this.level = 0,
-    this.maxLevel = 5,
+    this.maxLevel = 3,
     this.locked = true,
   });
 

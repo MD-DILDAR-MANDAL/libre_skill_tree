@@ -30,7 +30,12 @@ class SkillTreeScene extends GSprite {
   void buildNodes() {
     for (var skill in tree.nodes) {
       final node = nodesLayer.addChild(
-        SkillNode(nodeId: skill.id, label: skill.title, onNodeTap: onNodeTap),
+        SkillNode(
+          nodeId: skill.id,
+          label: skill.title,
+          level: skill.level,
+          onNodeTap: onNodeTap,
+        ),
       );
       node.x = skill.x;
       node.y = skill.y;
@@ -49,7 +54,7 @@ class SkillTreeScene extends GSprite {
   void drawLine(GDisplayObject a, GDisplayObject b) {
     final edge = edgesLayer.addChild(GShape());
     edge.graphics
-        .lineStyle(3, Colors.redAccent)
+        .lineStyle(3, Colors.deepOrangeAccent)
         .moveTo(a.x, a.y)
         .lineTo(b.x, b.y)
         .endFill();
@@ -57,7 +62,6 @@ class SkillTreeScene extends GSprite {
 
   void _centerRoot() {
     if (stage == null || stage!.stageWidth <= 0) {
-      // Try again next frame if the size isn't ready
       stage!.onEnterFrame.addOnce((_) => _centerRoot());
       return;
     }
@@ -102,25 +106,43 @@ class SkillTreeScene extends GSprite {
 class SkillNode extends GSprite {
   final String nodeId;
   final String label;
+  final int level;
   final OnSkillNodeTap onNodeTap;
   late GShape bg;
 
   SkillNode({
     required this.nodeId,
     required this.label,
+    required this.level,
     required this.onNodeTap,
   });
 
   @override
   void addedToStage() {
+    Color ringColor;
+    if (level == 0) {
+      ringColor = Colors.grey;
+    } else if (level == 1) {
+      ringColor = Colors.blueAccent;
+    } else if (level == 2) {
+      ringColor = Colors.greenAccent;
+    } else {
+      ringColor = Colors.purpleAccent;
+    }
     // Background circle
     bg = addChild(GShape());
-    bg.graphics.beginFill(Colors.deepPurple).drawCircle(0, 0, 35).endFill();
-
+    bg.graphics.beginFill(ringColor).drawCircle(0, 0, 35).endFill();
+    bg.graphics.beginFill(Color(0xFF151a7d)).drawCircle(0, -9, 24);
     final text = addChild(
       GText(
         text: label,
-        textStyle: const TextStyle(color: Colors.black, fontSize: 12),
+        textStyle: const TextStyle(
+          backgroundColor: Color(0xFF151a7d),
+          fontFamily: 'Oxanium',
+          color: Colors.amber,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
     text.alignPivot();

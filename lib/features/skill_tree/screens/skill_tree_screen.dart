@@ -39,6 +39,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           title: "New Goal",
           x: 0,
           y: 0,
+          level: 0,
           locked: false,
         ),
       ],
@@ -60,7 +61,6 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   void _realignTree() async {
     if (activeTree == null || activeTree!.nodes.isEmpty) return;
 
-    // 1. Helper to calculate how much total horizontal space a node needs
     double getSubtreeWidth(String parentId) {
       final children = activeTree!.edges
           .where((e) => e.fromNodeId == parentId)
@@ -74,7 +74,6 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
       return totalWidth;
     }
 
-    // 2. Recursive function to position nodes
     void positionNodes(String nodeId, double leftBoundary, double y) {
       final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
       final childrenEdges = activeTree!.edges
@@ -82,7 +81,6 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           .toList();
 
       double subtreeWidth = getSubtreeWidth(nodeId);
-      // Center the node within its allocated subtree width
       node.x = leftBoundary + (subtreeWidth / 2);
       node.y = y;
 
@@ -158,7 +156,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   }
 
   void _deleteNode(String nodeId) async {
-    if (nodeId == "root") return; // Safety check
+    if (nodeId == "root") return;
 
     activeTree!.nodes = activeTree!.nodes.where((n) => n.id != nodeId).toList();
     activeTree!.edges = activeTree!.edges
@@ -166,7 +164,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
         .toList();
 
     await widget.repository.saveTree(activeTree!);
-    _realignTree(); // Added this to fix layout after deletion
+    _realignTree();
   }
 
   void _editLevel(String nodeId) async {
@@ -181,11 +179,9 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     _refreshTree();
   }
 
-  // Helper to ensure state is fresh and GraphX triggers a rebuild
   void _refreshTree() async {
     final updatedTrees = await widget.repository.getAllTrees();
     setState(() {
-      // Find the tree we were just editing by ID
       activeTree = updatedTrees.firstWhere((t) => t.id == activeTree?.id);
     });
   }
@@ -237,8 +233,18 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF151a7d),
       appBar: AppBar(
-        title: const Text("Skill Tree"),
+        backgroundColor: Color(0xFF151a7d),
+        foregroundColor: Colors.white,
+        title: Text(
+          "Libre SkillTree",
+          style: TextStyle(
+            letterSpacing: 3,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(onPressed: _exportJson, icon: const Icon(Icons.download)),
         ],
@@ -247,7 +253,10 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           ? Center(
               child: ElevatedButton(
                 onPressed: _createNewTree,
-                child: const Text("Start New Tree"),
+                child: const Text(
+                  "Start New Tree",
+                  style: TextStyle(color: Colors.amber),
+                ),
               ),
             )
           : SceneBuilderWidget(
