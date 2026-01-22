@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
+import 'package:libre_skill_tree/core/constants/app_colors.dart';
 import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/graphx/skill_tree_graphics.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SkillTreeScreen extends StatefulWidget {
   final SkillTreeRepository repository;
@@ -49,13 +53,27 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     setState(() => activeTree = newTree);
   }
 
-  void _exportJson() {
+  Future<void> _exportJson() async {
     if (activeTree == null) return;
     final jsonStr = jsonEncode(activeTree!.toJson());
+    //Clipboard.setData(ClipboardData(text: jsonStr));
+
     debugPrint(jsonStr);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("JSON copied to log")));
+    await Permission.storage.request();
+    final directory = await getDownloadsDirectory();
+    final path = directory!.path;
+    final file = File('$path/Libre_SkillTree.json');
+    await file.writeAsString(jsonStr);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 6),
+        content: Text(
+          "JSON copied to clipboard \n file at location: \n $path",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
   }
 
   void _realignTree() async {
@@ -153,6 +171,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
         ],
       ),
     );
+    setState(() {});
   }
 
   void _deleteNode(String nodeId) async {
@@ -232,47 +251,54 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF151a7d),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF151a7d),
-        foregroundColor: Colors.white,
-        title: Text(
-          "Libre SkillTree",
-          style: TextStyle(
-            letterSpacing: 3,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(onPressed: _exportJson, icon: const Icon(Icons.download)),
-        ],
-      ),
-      body: activeTree == null
-          ? Center(
-              child: ElevatedButton(
-                onPressed: _createNewTree,
-                child: const Text(
-                  "Start New Tree",
-                  style: TextStyle(color: Colors.amber),
-                ),
-              ),
-            )
-          : SceneBuilderWidget(
-              autoSize: true,
-              builder: () => SceneController(
-                front: SkillTreeScene(
-                  activeTree!,
-                  onNodeTap: (id) => _onNodeTapped(context, id),
-                ),
-              ),
-              key: ValueKey(
-                'tree_${activeTree!.id}_'
-                'nodes_${activeTree!.nodes.length}_'
-                'lvls_${activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
-              ),
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Scaffold(
+        backgroundColor: AppColors.appBackground,
+        appBar: AppBar(
+          backgroundColor: AppColors.appBackground,
+          foregroundColor: Colors.white,
+          title: Text(
+            "Libre SkillTree",
+            style: TextStyle(
+              letterSpacing: 3,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
+          ),
+          actions: [
+            IconButton(
+              onPressed: _exportJson,
+              icon: const Icon(Icons.download),
+            ),
+          ],
+        ),
+        body: activeTree == null
+            ? Center(
+                child: ElevatedButton(
+                  onPressed: _createNewTree,
+                  child: const Text(
+                    "Start New Tree",
+                    style: TextStyle(color: Colors.amber),
+                  ),
+                ),
+              )
+            : SceneBuilderWidget(
+                autoSize: true,
+                builder: () => SceneController(
+                  front: SkillTreeScene(
+                    activeTree!,
+                    onNodeTap: (id) => _onNodeTapped(context, id),
+                  ),
+                ),
+                key: ValueKey(
+                  'tree_${activeTree!.id}_'
+                  'nodes_${activeTree!.nodes.length}_'
+                  'lvls_${activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
+                ),
+              ),
+      ),
     );
   }
 }

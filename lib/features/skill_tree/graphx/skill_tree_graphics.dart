@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
+import 'package:libre_skill_tree/core/constants/app_colors.dart';
 import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
 
 typedef OnSkillNodeTap = void Function(String nodeId);
@@ -120,24 +121,44 @@ class SkillNode extends GSprite {
   @override
   void addedToStage() {
     Color ringColor;
+    String levelName;
     if (level == 0) {
-      ringColor = Colors.grey;
+      levelName = "Root";
+      ringColor = AppColors.rootRing;
     } else if (level == 1) {
-      ringColor = Colors.blueAccent;
+      levelName = "Rookie";
+      ringColor = AppColors.rookieRing;
     } else if (level == 2) {
-      ringColor = Colors.greenAccent;
+      levelName = "Veteran";
+      ringColor = AppColors.veteranRing;
     } else {
-      ringColor = Colors.purpleAccent;
+      levelName = "Master";
+      ringColor = AppColors.masterRing;
     }
     // Background circle
     bg = addChild(GShape());
     bg.graphics.beginFill(ringColor).drawCircle(0, 0, 35).endFill();
-    bg.graphics.beginFill(Color(0xFF151a7d)).drawCircle(0, -9, 24);
-    final text = addChild(
+    bg.graphics.beginFill(AppColors.appBackground).drawCircle(0, -9, 24);
+
+    final levelText = addChild(
+      GText(
+        text: levelName,
+        textStyle: const TextStyle(
+          fontFamily: 'Oxanium',
+          color: Colors.amber,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    levelText.alignPivot();
+    levelText.y = -10;
+
+    final nodeNameText = addChild(
       GText(
         text: label,
         textStyle: const TextStyle(
-          backgroundColor: Color(0xFF151a7d),
+          backgroundColor: AppColors.appBackground,
           fontFamily: 'Oxanium',
           color: Colors.amber,
           fontSize: 14,
@@ -145,8 +166,8 @@ class SkillNode extends GSprite {
         ),
       ),
     );
-    text.alignPivot();
-    text.y = 50;
+    nodeNameText.alignPivot();
+    nodeNameText.y = 50;
 
     mouseEnabled = true;
 
