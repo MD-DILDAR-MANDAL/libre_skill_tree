@@ -77,9 +77,11 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   }
 
   void _realignTree() async {
+    debugPrint("calling realignTree");
     if (activeTree == null || activeTree!.nodes.isEmpty) return;
 
     double getSubtreeWidth(String parentId) {
+      //extracting all the edges having parentId root
       final children = activeTree!.edges
           .where((e) => e.fromNodeId == parentId)
           .toList();
@@ -171,19 +173,29 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
         ],
       ),
     );
-    setState(() {});
   }
 
   void _deleteNode(String nodeId) async {
     if (nodeId == "root") return;
+    if (nodeId == "") return;
 
-    activeTree!.nodes = activeTree!.nodes.where((n) => n.id != nodeId).toList();
+    final List<String> deletedNodes = [nodeId];
+    for (var edge in activeTree!.edges) {
+      if (edge.fromNodeId == nodeId && edge.toNodeId != '') {
+        deletedNodes.add(edge.toNodeId);
+        _deleteNode(edge.toNodeId);
+      }
+    }
+
+    activeTree!.nodes = activeTree!.nodes
+        .where((n) => deletedNodes.contains(n.id) != true)
+        .toList();
+
     activeTree!.edges = activeTree!.edges
         .where((e) => e.fromNodeId != nodeId && e.toNodeId != nodeId)
         .toList();
 
     await widget.repository.saveTree(activeTree!);
-    _realignTree();
   }
 
   void _editLevel(String nodeId) async {
@@ -242,6 +254,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
               onTap: () {
                 Navigator.pop(context);
                 _deleteNode(nodeId);
+                _realignTree();
               },
             ),
         ],
@@ -280,7 +293,11 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
                   onPressed: _createNewTree,
                   child: const Text(
                     "Start New Tree",
-                    style: TextStyle(color: Colors.amber),
+                    style: TextStyle(
+                      color: AppColors.appBackground,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               )

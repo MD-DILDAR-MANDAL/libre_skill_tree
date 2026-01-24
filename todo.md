@@ -2,9 +2,9 @@
 
 [//]: # (- Copying the text in a clipboard)
 [//]: # (- Saving the tree in a file)
-- implement delete recursively
-- Improve the functions logic
+[//]: # (- implement delete recursively)
 - Add option to level up (like radio buttons)
+- Improve the functions logic
 - Zoom in zoom out 
 - Gradient instead of simple color
 - Animation
