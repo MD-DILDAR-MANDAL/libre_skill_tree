@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
 import 'package:libre_skill_tree/core/constants/app_colors.dart';
+import 'package:libre_skill_tree/core/widget/option_tile.dart';
 import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/graphx/skill_tree_graphics.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+enum Level { root, rookie, veteran, master }
 
 class SkillTreeScreen extends StatefulWidget {
   final SkillTreeRepository repository;
@@ -64,16 +67,17 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     final path = directory!.path;
     final file = File('$path/Libre_SkillTree.json');
     await file.writeAsString(jsonStr);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: Duration(seconds: 6),
-        content: Text(
-          "JSON copied to clipboard \n file at location: \n $path",
-          style: TextStyle(fontSize: 20),
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 6),
+          content: Text(
+            "JSON copied to clipboard \n file at location: \n $path",
+            style: TextStyle(fontSize: 20),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void _realignTree() async {
@@ -165,7 +169,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             onPressed: () async {
               node.title = controller.text;
               await widget.repository.saveTree(activeTree!);
-              Navigator.pop(context);
+              if (mounted) Navigator.pop(context);
               _refreshTree();
             },
             child: const Text("Save"),
@@ -198,11 +202,22 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     await widget.repository.saveTree(activeTree!);
   }
 
-  void _editLevel(String nodeId) async {
+  void _editLevel(String nodeId, Level level) async {
     final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
 
-    // Increment level or reset if max reached
-    node.level = (node.level + 1) % (node.maxLevel + 1);
+    switch (level) {
+      case Level.rookie:
+        node.level = 1;
+        break;
+      case Level.veteran:
+        node.level = 2;
+        break;
+      case Level.master:
+        node.level = 3;
+        break;
+      default:
+        node.level = 0;
+    }
 
     // Unlock logic (example: if parent is leveled up, children could unlock)
     // For now, we just save the level
@@ -242,9 +257,9 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           ListTile(
             leading: const Icon(Icons.upgrade),
             title: const Text("Level Up"),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              _editLevel(nodeId);
+              await _showDialog(context, nodeId);
             },
           ),
           if (nodeId != "root")
@@ -259,6 +274,55 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> _showDialog(BuildContext context, String nodeId) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Center(
+            child: Text(
+              "Select Level",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.appBackground,
+              ),
+            ),
+          ),
+          children: [
+            SimpleDialogOption(
+              onPressed: () {
+                _editLevel(nodeId, Level.root);
+                Navigator.pop(context);
+              },
+              child: OptionTile(color: AppColors.rootRing, title: "Root"),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                _editLevel(nodeId, Level.rookie);
+                Navigator.pop(context);
+              },
+              child: OptionTile(color: AppColors.rookieRing, title: "Rookie"),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                _editLevel(nodeId, Level.veteran);
+                Navigator.pop(context);
+              },
+              child: OptionTile(color: AppColors.veteranRing, title: "Veteran"),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                _editLevel(nodeId, Level.master);
+                Navigator.pop(context);
+              },
+              child: OptionTile(color: AppColors.masterRing, title: "Master"),
+            ),
+          ],
+        );
+      },
     );
   }
 

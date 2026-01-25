@@ -9,10 +9,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="chore: task update">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="feat: delete child of node recursively">
+      <change afterPath="$PROJECT_DIR$/lib/core/widget/option_tile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.md" beforeDir="false" afterPath="$PROJECT_DIR$/todo.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +39,12 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -142,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769114456777</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: delete child of node recursively">
+      <option name="closed" value="true" />
+      <created>1769270586052</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1769270586052</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -170,6 +186,7 @@
     <MESSAGE value="chore: readme update" />
     <MESSAGE value="feat: tree save in file" />
     <MESSAGE value="chore: task update" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore: task update" />
+    <MESSAGE value="feat: delete child of node recursively" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: delete child of node recursively" />
   </component>
 </project>
