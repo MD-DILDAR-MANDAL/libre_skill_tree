@@ -135,10 +135,16 @@ class SkillNode extends GSprite {
       levelName = "Master";
       ringColor = AppColors.masterRing;
     }
+    double ringRadius = 38;
     // Background circle
     bg = addChild(GShape());
-    bg.graphics.beginFill(ringColor).drawCircle(0, 0, 35).endFill();
-    bg.graphics.beginFill(AppColors.appBackground).drawCircle(0, -9, 24);
+    bg.graphics.beginFill(ringColor).drawCircle(0, 0, ringRadius).endFill();
+    if (kDebugMode) {
+      debugPrint("w:${stage!.stageWidth} h:${stage!.stageHeight}");
+    }
+    bg.graphics
+        .beginFill(AppColors.appBackground)
+        .drawCircle(0, -9, ringRadius - 11);
 
     final levelText = addChild(
       GText(

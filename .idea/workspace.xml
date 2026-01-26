@@ -9,10 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="feat: delete child of node recursively">
-      <change afterPath="$PROJECT_DIR$/lib/core/widget/option_tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
+    <list default="true" id="1143140a-ba49-4907-bcc4-72fc50786c5d" name="Changes" comment="feat: add option for level up">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.md" beforeDir="false" afterPath="$PROJECT_DIR$/todo.md" afterDir="false" />
     </list>
@@ -158,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769270586052</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="feat: add option for level up">
+      <option name="closed" value="true" />
+      <created>1769376820828</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1769376820829</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -187,6 +194,7 @@
     <MESSAGE value="feat: tree save in file" />
     <MESSAGE value="chore: task update" />
     <MESSAGE value="feat: delete child of node recursively" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: delete child of node recursively" />
+    <MESSAGE value="feat: add option for level up" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add option for level up" />
   </component>
 </project>

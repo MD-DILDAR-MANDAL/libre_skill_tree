@@ -365,18 +365,24 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
                   ),
                 ),
               )
-            : SceneBuilderWidget(
-                autoSize: true,
-                builder: () => SceneController(
-                  front: SkillTreeScene(
-                    activeTree!,
-                    onNodeTap: (id) => _onNodeTapped(context, id),
+            : InteractiveViewer(
+                maxScale: 10,
+                child: Transform.scale(
+                  scale: 0.15,
+                  child: SceneBuilderWidget(
+                    autoSize: true,
+                    builder: () => SceneController(
+                      front: SkillTreeScene(
+                        activeTree!,
+                        onNodeTap: (id) => _onNodeTapped(context, id),
+                      ),
+                    ),
+                    key: ValueKey(
+                      'tree_${activeTree!.id}_'
+                      'nodes_${activeTree!.nodes.length}_'
+                      'lvls_${activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
+                    ),
                   ),
-                ),
-                key: ValueKey(
-                  'tree_${activeTree!.id}_'
-                  'nodes_${activeTree!.nodes.length}_'
-                  'lvls_${activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
                 ),
               ),
       ),
