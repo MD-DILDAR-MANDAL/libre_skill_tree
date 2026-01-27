@@ -5,8 +5,11 @@
 [//]: # (- implement delete recursively)
 [//]: # (- Add option to level up )
 [//]: # (- Zoom in zoom out )
+[//]: # (- delete the whole tree)
+- implement  bloc architecture
+- proper node spacing
+- Shape with different level
+- app icon create
+- sharing the tree as image
 - Gradient instead of simple color
 - Animation
-- Shape with different level
-- implement  bloc architecture
-- delete the whole tree

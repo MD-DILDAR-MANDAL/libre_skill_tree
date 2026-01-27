@@ -39,7 +39,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
 
   void _createNewTree() async {
     final newTree = SkillTreeModel(
-      name: "New Skill Tree",
+      name: "SkillTree1",
       nodes: [
         SkillNodeModel(
           id: "root",
@@ -147,11 +147,11 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     _realignTree();
   }
 
-  void _renameNode(String nodeId) {
+  Future<dynamic> _renameNode(String nodeId, BuildContext context) {
     final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
     final controller = TextEditingController(text: node.title);
 
-    showDialog(
+    return showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Rename Node"),
@@ -169,8 +169,10 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             onPressed: () async {
               node.title = controller.text;
               await widget.repository.saveTree(activeTree!);
-              if (mounted) Navigator.pop(context);
               _refreshTree();
+              if (mounted) {
+                Navigator.pop(context);
+              }
             },
             child: const Text("Save"),
           ),
@@ -180,9 +182,12 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   }
 
   void _deleteNode(String nodeId) async {
-    if (nodeId == "root") return;
     if (nodeId == "") return;
-
+    if (nodeId == "root") {
+      widget.repository.deleteTree(activeTree!.name);
+      setState(() => activeTree = null);
+      return;
+    }
     final List<String> deletedNodes = [nodeId];
     for (var edge in activeTree!.edges) {
       if (edge.fromNodeId == nodeId && edge.toNodeId != '') {
@@ -249,9 +254,9 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           ListTile(
             leading: const Icon(Icons.edit),
             title: const Text("Rename"),
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
-              _renameNode(nodeId);
+              await _renameNode(nodeId, context);
             },
           ),
           ListTile(
@@ -262,16 +267,15 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
               await _showDialog(context, nodeId);
             },
           ),
-          if (nodeId != "root")
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text("Delete"),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteNode(nodeId);
-                _realignTree();
-              },
-            ),
+          ListTile(
+            leading: const Icon(Icons.delete, color: Colors.red),
+            title: const Text("Delete"),
+            onTap: () {
+              Navigator.pop(context);
+              _deleteNode(nodeId);
+              _realignTree();
+            },
+          ),
         ],
       ),
     );
