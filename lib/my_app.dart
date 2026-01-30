@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:libre_skill_tree/features/home/home_screen.dart';
 import 'package:libre_skill_tree/features/profile/screens/profile_screen.dart';
+import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_bloc.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
 import 'package:libre_skill_tree/features/skill_tree/screens/skill_tree_screen.dart';
 
@@ -18,10 +20,18 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Inter'),
-      home: AppNavigation(repository: widget.repository),
+    SkillTreeRepository repository = widget.repository;
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SkillTreeBloc>(
+          create: (BuildContext context) => SkillTreeBloc(repository),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Inter'),
+        home: AppNavigation(repository: widget.repository),
+      ),
     );
   }
 }

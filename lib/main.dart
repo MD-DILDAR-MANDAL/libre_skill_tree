@@ -7,5 +7,6 @@ void main() async {
 
   final repository = SkillTreeRepository();
   await repository.init();
+
   runApp(MyApp(repository: repository));
 }

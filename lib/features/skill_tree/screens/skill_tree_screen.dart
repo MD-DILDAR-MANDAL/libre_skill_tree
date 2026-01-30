@@ -2,9 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphx/graphx.dart';
 import 'package:libre_skill_tree/core/constants/app_colors.dart';
 import 'package:libre_skill_tree/core/widget/option_tile.dart';
+import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_bloc.dart';
+import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_event.dart';
+import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_state.dart';
 import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/graphx/skill_tree_graphics.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
@@ -27,33 +31,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
-  }
-
-  void _loadInitialData() async {
-    final trees = await widget.repository.getAllTrees();
-    if (trees.isNotEmpty) {
-      setState(() => activeTree = trees.first);
-    }
-  }
-
-  void _createNewTree() async {
-    final newTree = SkillTreeModel(
-      name: "SkillTree1",
-      nodes: [
-        SkillNodeModel(
-          id: "root",
-          title: "New Goal",
-          x: 0,
-          y: 0,
-          level: 0,
-          locked: false,
-        ),
-      ],
-      edges: [],
-    );
-    await widget.repository.saveTree(newTree);
-    setState(() => activeTree = newTree);
+    context.read<SkillTreeBloc>().add(LoadInitialTreeData());
   }
 
   Future<void> _exportJson() async {
@@ -355,40 +333,45 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             ),
           ],
         ),
-        body: activeTree == null
-            ? Center(
-                child: ElevatedButton(
-                  onPressed: _createNewTree,
-                  child: const Text(
-                    "Start New Tree",
-                    style: TextStyle(
-                      color: AppColors.appBackground,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              )
-            : InteractiveViewer(
-                maxScale: 10,
-                child: Transform.scale(
-                  scale: 0.15,
-                  child: SceneBuilderWidget(
-                    autoSize: true,
-                    builder: () => SceneController(
-                      front: SkillTreeScene(
-                        activeTree!,
-                        onNodeTap: (id) => _onNodeTapped(context, id),
+        body: BlocBuilder<SkillTreeBloc, SkillTreeState>(
+          builder: (context, state) {
+            return state.activeTree == null
+                ? Center(
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          context.read<SkillTreeBloc>().add(CreateNewTree()),
+                      child: const Text(
+                        "Start New Tree",
+                        style: TextStyle(
+                          color: AppColors.appBackground,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    key: ValueKey(
-                      'tree_${activeTree!.id}_'
-                      'nodes_${activeTree!.nodes.length}_'
-                      'lvls_${activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
+                  )
+                : InteractiveViewer(
+                    maxScale: 10,
+                    child: Transform.scale(
+                      scale: 0.15,
+                      child: SceneBuilderWidget(
+                        autoSize: true,
+                        builder: () => SceneController(
+                          front: SkillTreeScene(
+                            state.activeTree!,
+                            onNodeTap: (id) => _onNodeTapped(context, id),
+                          ),
+                        ),
+                        key: ValueKey(
+                          'tree_${state.activeTree!.id}_'
+                          'nodes_${state.activeTree!.nodes.length}_'
+                          'lvls_${state.activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  );
+          },
+        ),
       ),
     );
   }
