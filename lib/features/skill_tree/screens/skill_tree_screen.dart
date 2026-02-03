@@ -35,8 +35,10 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
   }
 
   Future<void> _exportJson() async {
-    if (activeTree == null) return;
-    final jsonStr = jsonEncode(activeTree!.toJson());
+    SkillTreeState state = BlocProvider.of<SkillTreeBloc>(context).state;
+
+    if (state.activeTree == null) return;
+    final jsonStr = jsonEncode(state.activeTree!.toJson());
     //Clipboard.setData(ClipboardData(text: jsonStr));
 
     debugPrint(jsonStr);
@@ -58,52 +60,6 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     }
   }
 
-  void _realignTree() async {
-    debugPrint("calling realignTree");
-    if (activeTree == null || activeTree!.nodes.isEmpty) return;
-
-    double getSubtreeWidth(String parentId) {
-      //extracting all the edges having parentId root
-      final children = activeTree!.edges
-          .where((e) => e.fromNodeId == parentId)
-          .toList();
-      if (children.isEmpty) return 120.0; // Base width for a single node
-
-      double totalWidth = 0;
-      for (var edge in children) {
-        totalWidth += getSubtreeWidth(edge.toNodeId);
-      }
-      return totalWidth;
-    }
-
-    void positionNodes(String nodeId, double leftBoundary, double y) {
-      final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
-      final childrenEdges = activeTree!.edges
-          .where((e) => e.fromNodeId == nodeId)
-          .toList();
-
-      double subtreeWidth = getSubtreeWidth(nodeId);
-      node.x = leftBoundary + (subtreeWidth / 2);
-      node.y = y;
-
-      double currentLeft = leftBoundary;
-      for (var edge in childrenEdges) {
-        double childWidth = getSubtreeWidth(edge.toNodeId);
-        positionNodes(edge.toNodeId, currentLeft, y + 150);
-        currentLeft += childWidth;
-      }
-    }
-
-    // 3. Execute realignment
-    // We treat the root as the center of its own universe
-    double rootWidth = getSubtreeWidth("root");
-    positionNodes("root", -(rootWidth / 2), 0);
-
-    // 4. Save the calculated positions back to Isar
-    await widget.repository.saveTree(activeTree!);
-    _refreshTree();
-  }
-
   void _addConnectedNode(String parentId) async {
     if (activeTree == null) return;
     final newId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -122,7 +78,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
       ..add(SkillEdgeModel(fromNodeId: parentId, toNodeId: newId));
 
     await widget.repository.saveTree(activeTree!);
-    _realignTree();
+    if (mounted) context.read<SkillTreeBloc>().add(RealignTree());
   }
 
   Future<dynamic> _renameNode(String nodeId, BuildContext context) {
@@ -157,32 +113,6 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
         ],
       ),
     );
-  }
-
-  void _deleteNode(String nodeId) async {
-    if (nodeId == "") return;
-    if (nodeId == "root") {
-      widget.repository.deleteTree(activeTree!.name);
-      setState(() => activeTree = null);
-      return;
-    }
-    final List<String> deletedNodes = [nodeId];
-    for (var edge in activeTree!.edges) {
-      if (edge.fromNodeId == nodeId && edge.toNodeId != '') {
-        deletedNodes.add(edge.toNodeId);
-        _deleteNode(edge.toNodeId);
-      }
-    }
-
-    activeTree!.nodes = activeTree!.nodes
-        .where((n) => deletedNodes.contains(n.id) != true)
-        .toList();
-
-    activeTree!.edges = activeTree!.edges
-        .where((e) => e.fromNodeId != nodeId && e.toNodeId != nodeId)
-        .toList();
-
-    await widget.repository.saveTree(activeTree!);
   }
 
   void _editLevel(String nodeId, Level level) async {
@@ -250,8 +180,7 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             title: const Text("Delete"),
             onTap: () {
               Navigator.pop(context);
-              _deleteNode(nodeId);
-              _realignTree();
+              context.read<SkillTreeBloc>().add(DeleteNode(nodeId));
             },
           ),
         ],
