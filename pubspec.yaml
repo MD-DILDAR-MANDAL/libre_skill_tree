@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
+  flutter_launcher_icons: ^0.14.4
   get_it: ^9.2.0
   graphx: ^1.0.14
 
@@ -21,6 +22,12 @@ dependencies:
 
   permission_handler: ^12.0.1
   supabase_flutter: ^2.10.3
+
+flutter_launcher_icons:
+ image_path: "assets/icons/icon.png"
+ android: true
+ adaptive_icon_background: "assets/icons/background.png"
+ adaptive_icon_foreground: "assets/icons/foreground.png"
 
 dev_dependencies:
   isar_community_generator: ^3.3.0
