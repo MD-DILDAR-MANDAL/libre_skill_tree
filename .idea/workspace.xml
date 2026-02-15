@@ -4,32 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="722c0ab4-80dc-4a78-b89a-fd3712f1ff4a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" beforeDir="false" />
+    <list default="true" id="722c0ab4-80dc-4a78-b89a-fd3712f1ff4a" name="Changes" comment="feat: zoom/tap fix and minor ui update">
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/main_dart.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/home/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/home/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/profile/screens/profile_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/bloc/skill_tree_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/data/skill_tree_model.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/data/skill_tree_model.g.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/graphx/skill_tree_graphics.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/repository/skill_tree_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/repository/skill_tree_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/add_skill_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/proguard-rules.pro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_details_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/features/skill_tree/screens/skill_tree_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/my_app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/my_app.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libre_skill_tree.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +62,19 @@
       <option name="presentableId" value="Default" />
       <updated>1771138016802</updated>
     </task>
+    <task id="LOCAL-00001" summary="feat: zoom/tap fix and minor ui update">
+      <option name="closed" value="true" />
+      <created>1771169640316</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1771169640316</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: zoom/tap fix and minor ui update" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: zoom/tap fix and minor ui update" />
   </component>
 </project>
