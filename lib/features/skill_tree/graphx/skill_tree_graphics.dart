@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:graphx/graphx.dart';
 import 'package:libre_skill_tree/core/constants/app_colors.dart';
-import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
+import 'package:libre_skill_tree/features/skill_tree/models/skill_tree_model.dart';
 
 typedef OnSkillNodeTap = void Function(String nodeId);
 
 class SkillTreeScene extends GSprite {
   final SkillTreeModel tree;
   final OnSkillNodeTap onNodeTap;
+  final bool enableZoom;
+  final double initialCameraScale;
 
-  SkillTreeScene(this.tree, {required this.onNodeTap});
+  double initialDistance = 0;
+  double initialScale = 1.0;
+
+  SkillTreeScene(
+    this.tree, {
+    required this.onNodeTap,
+    this.enableZoom = true,
+    this.initialCameraScale = 0.6,
+  });
 
   late GSprite camera;
   late GSprite nodesLayer;
@@ -22,10 +32,11 @@ class SkillTreeScene extends GSprite {
     edgesLayer = camera.addChild(GSprite());
     nodesLayer = camera.addChild(GSprite());
 
+    camera.scale = initialCameraScale;
     buildNodes();
     buildEdges();
     Future.microtask(_centerRoot);
-    _enablePan();
+    _enablePanAndZoom();
   }
 
   void buildNodes() {
@@ -77,7 +88,7 @@ class SkillTreeScene extends GSprite {
     camera.y = stage!.stageHeight / 2 - rootNode.y;
   }
 
-  void _enablePan() {
+  void _enablePanAndZoom() {
     double lastX = 0;
     double lastY = 0;
     bool isDragging = false;
@@ -100,7 +111,17 @@ class SkillTreeScene extends GSprite {
         lastY = e.stageY;
       }
     });
-    stage!.onMouseUp.add((e) => isDragging = false);
+    stage!.onMouseUp.add((e) {
+      isDragging = false;
+      initialDistance = 0;
+    });
+    stage!.onMouseScroll.add((e) {
+      if (!enableZoom) return;
+      double delta = e.scrollDelta.y;
+      double scaleAmount = delta > 0 ? 0.9 : 1.1;
+      camera.scale *= scaleAmount;
+      camera.scale = (camera.scale * scaleAmount).clamp(0.1, 2.0);
+    });
   }
 }
 
@@ -160,6 +181,37 @@ class SkillNode extends GSprite {
     levelText.alignPivot();
     levelText.y = -10;
 
+    String formatLabel(String text) {
+      if (text.length <= 15) return text;
+
+      List<String> words = text.split(' ');
+      String result = '';
+      String currentLine = '';
+
+      for (String word in words) {
+        // If adding the word exceeds 9, move currentLine to result and start new
+        if ((currentLine + word).length > 9) {
+          if (currentLine.isNotEmpty) {
+            result += '${currentLine.trim()}\n';
+            currentLine = '';
+          }
+
+          // If a single word is longer than 9, force wrap it
+          String tempWord = word;
+          while (tempWord.length > 9) {
+            result += '${tempWord.substring(0, 9)}\n';
+            tempWord = tempWord.substring(9);
+          }
+          currentLine = '$tempWord ';
+        } else {
+          currentLine += '$word ';
+        }
+      }
+      result += currentLine.trim();
+      return result;
+    }
+
+    final formattedLabel = formatLabel(label);
     final nodeNameText = addChild(
       GText(
         text: label,
@@ -173,7 +225,7 @@ class SkillNode extends GSprite {
       ),
     );
     nodeNameText.alignPivot();
-    nodeNameText.y = 50;
+    nodeNameText.y = 55;
 
     mouseEnabled = true;
 

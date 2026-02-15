@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:libre_skill_tree/core/constants/app_colors.dart';
 import 'package:libre_skill_tree/features/home/home_screen.dart';
-import 'package:libre_skill_tree/features/profile/screens/profile_screen.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_bloc.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
 import 'package:libre_skill_tree/features/skill_tree/screens/skill_tree_screen.dart';
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Inter'),
-        home: AppNavigation(repository: widget.repository),
+        home: AppNavigation(repository: repository),
       ),
     );
   }
@@ -49,29 +49,34 @@ class _AppNavigationState extends State<AppNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final screens = [
+      const HomeScreen(),
+      SkillTreeScreen(repository: widget.repository),
+    ];
     return Scaffold(
+      body: screens[currentPageIndex],
       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
+        backgroundColor: AppColors.appBackground,
+        indicatorColor: Colors.deepOrangeAccent,
+        selectedIndex: currentPageIndex,
+        onDestinationSelected: (index) =>
+            setState(() => currentPageIndex = index),
         destinations: [
-          NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
           NavigationDestination(
-            icon: Icon(Icons.engineering_outlined),
+            icon: Icon(Icons.home_outlined, color: Colors.blueGrey),
+            selectedIcon: Icon(Icons.home, color: Colors.white),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_tree_outlined, color: Colors.blueGrey),
+            selectedIcon: Icon(Icons.account_tree, color: Colors.white),
             label: 'Skill tree',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outlined),
-            label: 'Profile',
-          ),
         ],
-        selectedIndex: currentPageIndex,
         labelTextStyle: WidgetStateProperty<TextStyle>.fromMap(
           <WidgetStatesConstraint, TextStyle>{
             WidgetState.selected: TextStyle(
-              color: Colors.black,
+              color: Colors.deepOrangeAccent,
               fontWeight: FontWeight.bold,
             ),
             WidgetState.any: TextStyle(
@@ -81,11 +86,6 @@ class _AppNavigationState extends State<AppNavigation> {
           },
         ),
       ),
-      body: <Widget>[
-        HomeScreen(),
-        SkillTreeScreen(repository: widget.repository),
-        ProfileScreen(),
-      ][currentPageIndex],
     );
   }
 }

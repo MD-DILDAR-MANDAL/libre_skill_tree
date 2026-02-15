@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:isar_community/isar.dart';
-import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
+import 'package:libre_skill_tree/features/skill_tree/models/skill_tree_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SkillTreeRepository {

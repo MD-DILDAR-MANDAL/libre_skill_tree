@@ -9,8 +9,8 @@ import 'package:libre_skill_tree/core/widget/option_tile.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_bloc.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_event.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_state.dart';
-import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/graphx/skill_tree_graphics.dart';
+import 'package:libre_skill_tree/features/skill_tree/models/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -60,35 +60,23 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     }
   }
 
-  void _addConnectedNode(String parentId) async {
-    if (activeTree == null) return;
-    final newId = DateTime.now().millisecondsSinceEpoch.toString();
-
-    final newNode = SkillNodeModel(
-      id: newId,
-      title: "New Node",
-      x: 0,
-      y: 0,
-      locked: true,
-    );
-
-    activeTree!.nodes = List<SkillNodeModel>.from(activeTree!.nodes)
-      ..add(newNode);
-    activeTree!.edges = List<SkillEdgeModel>.from(activeTree!.edges)
-      ..add(SkillEdgeModel(fromNodeId: parentId, toNodeId: newId));
-
-    await widget.repository.saveTree(activeTree!);
-    if (mounted) context.read<SkillTreeBloc>().add(RealignTree());
-  }
-
   Future<dynamic> _renameNode(String nodeId, BuildContext context) {
-    final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
+    final state = context.read<SkillTreeBloc>().state;
+    final node = state.activeTree!.nodes.firstWhere((n) => n.id == nodeId);
     final controller = TextEditingController(text: node.title);
 
     return showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Rename Node"),
+        title: Center(
+          child: const Text(
+            "Rename Node",
+            style: TextStyle(
+              color: AppColors.appBackground,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         content: TextField(
           controller: controller,
           autofocus: true,
@@ -100,13 +88,12 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () async {
-              node.title = controller.text;
-              await widget.repository.saveTree(activeTree!);
-              _refreshTree();
-              if (mounted) {
-                Navigator.pop(context);
-              }
+            onPressed: () {
+              // Dispatch the Bloc Event
+              context.read<SkillTreeBloc>().add(
+                RenameNode(nodeId, controller.text),
+              );
+              Navigator.pop(context);
             },
             child: const Text("Save"),
           ),
@@ -115,75 +102,71 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
     );
   }
 
-  void _editLevel(String nodeId, Level level) async {
-    final node = activeTree!.nodes.firstWhere((n) => n.id == nodeId);
-
-    switch (level) {
-      case Level.rookie:
-        node.level = 1;
-        break;
-      case Level.veteran:
-        node.level = 2;
-        break;
-      case Level.master:
-        node.level = 3;
-        break;
-      default:
-        node.level = 0;
-    }
-
-    // Unlock logic (example: if parent is leveled up, children could unlock)
-    // For now, we just save the level
-    await widget.repository.saveTree(activeTree!);
-    _refreshTree();
-  }
-
-  void _refreshTree() async {
-    final updatedTrees = await widget.repository.getAllTrees();
-    setState(() {
-      activeTree = updatedTrees.firstWhere((t) => t.id == activeTree?.id);
-    });
-  }
-
   void _onNodeTapped(BuildContext context, String nodeId) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.add),
-            title: const Text("Add Child"),
-            onTap: () {
-              Navigator.pop(context);
-              _addConnectedNode(nodeId);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: const Text("Rename"),
-            onTap: () async {
-              Navigator.pop(context);
-              await _renameNode(nodeId, context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.upgrade),
-            title: const Text("Level Up"),
-            onTap: () async {
-              Navigator.pop(context);
-              await _showDialog(context, nodeId);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text("Delete"),
-            onTap: () {
-              Navigator.pop(context);
-              context.read<SkillTreeBloc>().add(DeleteNode(nodeId));
-            },
-          ),
-        ],
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text(
+                "Add Child",
+                style: TextStyle(
+                  color: AppColors.appBackground,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.read<SkillTreeBloc>().add(AddConnectedNode(nodeId));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text(
+                "Rename",
+                style: TextStyle(
+                  color: AppColors.appBackground,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
+                await _renameNode(nodeId, context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.upgrade),
+              title: const Text(
+                "Level Up",
+                style: TextStyle(
+                  color: AppColors.appBackground,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
+                await _showDialog(context, nodeId);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: const Text(
+                "Delete",
+                style: TextStyle(
+                  color: AppColors.appBackground,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.read<SkillTreeBloc>().add(DeleteNode(nodeId));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -205,28 +188,37 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
           children: [
             SimpleDialogOption(
               onPressed: () {
-                _editLevel(nodeId, Level.root);
+                context.read<SkillTreeBloc>().add(
+                  EditLevel(nodeId, Level.root),
+                );
                 Navigator.pop(context);
               },
               child: OptionTile(color: AppColors.rootRing, title: "Root"),
             ),
             SimpleDialogOption(
               onPressed: () {
-                _editLevel(nodeId, Level.rookie);
+                context.read<SkillTreeBloc>().add(
+                  EditLevel(nodeId, Level.rookie),
+                );
+
                 Navigator.pop(context);
               },
               child: OptionTile(color: AppColors.rookieRing, title: "Rookie"),
             ),
             SimpleDialogOption(
               onPressed: () {
-                _editLevel(nodeId, Level.veteran);
+                context.read<SkillTreeBloc>().add(
+                  EditLevel(nodeId, Level.veteran),
+                );
                 Navigator.pop(context);
               },
               child: OptionTile(color: AppColors.veteranRing, title: "Veteran"),
             ),
             SimpleDialogOption(
               onPressed: () {
-                _editLevel(nodeId, Level.master);
+                context.read<SkillTreeBloc>().add(
+                  EditLevel(nodeId, Level.master),
+                );
                 Navigator.pop(context);
               },
               child: OptionTile(color: AppColors.masterRing, title: "Master"),
@@ -279,24 +271,21 @@ class _SkillTreeScreenState extends State<SkillTreeScreen> {
                       ),
                     ),
                   )
-                : InteractiveViewer(
-                    maxScale: 10,
-                    child: Transform.scale(
-                      scale: 0.15,
-                      child: SceneBuilderWidget(
-                        autoSize: true,
-                        builder: () => SceneController(
-                          front: SkillTreeScene(
-                            state.activeTree!,
-                            onNodeTap: (id) => _onNodeTapped(context, id),
-                          ),
-                        ),
-                        key: ValueKey(
-                          'tree_${state.activeTree!.id}_'
-                          'nodes_${state.activeTree!.nodes.length}_'
-                          'lvls_${state.activeTree!.nodes.fold(0, (p, n) => p + n.level)}',
-                        ),
+                : SceneBuilderWidget(
+                    autoSize: true,
+                    builder: () => SceneController(
+                      front: SkillTreeScene(
+                        state.activeTree!,
+                        onNodeTap: (id) => _onNodeTapped(context, id),
+                        enableZoom: false,
+                        initialCameraScale: 0.6,
                       ),
+                    ),
+                    key: ValueKey(
+                      'tree_${state.activeTree!.id}_'
+                      'nodes_${state.activeTree!.nodes.length}_'
+                      'lvls_${state.activeTree!.nodes.fold(0, (p, n) => p + n.level)}_'
+                      'hash_${state.activeTree!.nodes.map((n) => n.title).join().hashCode}',
                     ),
                   );
           },

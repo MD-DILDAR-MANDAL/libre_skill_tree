@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/libre_skill_tree.iml" filepath="$PROJECT_DIR$/libre_skill_tree.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/libre_skill_tree_android.iml" filepath="$PROJECT_DIR$/android/libre_skill_tree_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/libre_skill_tree.iml" filepath="$PROJECT_DIR$/.idea/libre_skill_tree.iml" />
     </modules>
   </component>
 </project>

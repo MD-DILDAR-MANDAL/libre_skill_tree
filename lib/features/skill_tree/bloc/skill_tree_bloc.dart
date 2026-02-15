@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphx/graphx.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_event.dart';
 import 'package:libre_skill_tree/features/skill_tree/bloc/skill_tree_state.dart';
-import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
+import 'package:libre_skill_tree/features/skill_tree/models/skill_tree_model.dart';
 import 'package:libre_skill_tree/features/skill_tree/repository/skill_tree_repository.dart';
+import 'package:libre_skill_tree/features/skill_tree/screens/skill_tree_screen.dart';
 
 class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
   final SkillTreeRepository repository;
@@ -13,8 +14,11 @@ class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
   SkillTreeBloc(this.repository) : super(SkillTreeState()) {
     on<CreateNewTree>(onCreateNewTree);
     on<LoadInitialTreeData>(onLoadInitialTreeData);
+    on<AddConnectedNode>(onAddConnectedNode);
+    on<EditLevel>(onEditLevel);
+    on<RenameNode>(onRenameNode);
     on<DeleteNode>(onDeleteNode);
-    on<RealignTree>(_onRealignTree);
+    on<RealignTree>(onRealignTree);
   }
 
   Future<void> onCreateNewTree(
@@ -42,18 +46,41 @@ class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
     }
   }
 
+  Future<void> onAddConnectedNode(
+    AddConnectedNode event,
+    Emitter<SkillTreeState> emit,
+  ) async {
+    final newId = DateTime.now().millisecondsSinceEpoch.toString();
+    final newNode = SkillNodeModel(
+      id: newId,
+      title: "New Node",
+      x: 0,
+      y: 0,
+      locked: true,
+    );
+    SkillTreeModel currentTree = state.activeTree!;
+    currentTree.nodes = List<SkillNodeModel>.from(currentTree.nodes)
+      ..add(newNode);
+    currentTree.edges = List<SkillEdgeModel>.from(currentTree.edges)
+      ..add(SkillEdgeModel(fromNodeId: event.parentId, toNodeId: newId));
+
+    await repository.saveTree(currentTree);
+    emit(SkillTreeState(activeTree: currentTree));
+    add(RealignTree());
+  }
+
   Future<void> onLoadInitialTreeData(
     LoadInitialTreeData event,
     Emitter<SkillTreeState> emit,
   ) async {
-    List<SkillTreeModel> trees = await repository.getAllTrees();
-    emit(SkillTreeState(activeTree: trees.first));
+    List<SkillTreeModel>? trees = await repository.getAllTrees();
+    emit(SkillTreeState(activeTree: trees.isEmpty ? null : trees.first));
     if (kDebugMode) {
       debugPrint("loaded initial data");
     }
   }
 
-  Future<void> _onRealignTree(
+  Future<void> onRealignTree(
     RealignTree event,
     Emitter<SkillTreeState> emit,
   ) async {
@@ -108,6 +135,66 @@ class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
     emit(SkillTreeState(activeTree: newTree));
   }
 
+  Future<void> onEditLevel(EditLevel event, Emitter emit) async {
+    SkillTreeModel currentTree = state.activeTree!;
+
+    final SkillNodeModel levelNode = currentTree.nodes.firstWhere(
+      (n) => n.id == event.nodeId,
+    );
+
+    switch (event.level) {
+      case Level.rookie:
+        levelNode.level = 1;
+        break;
+      case Level.veteran:
+        levelNode.level = 2;
+        break;
+      case Level.master:
+        levelNode.level = 3;
+        break;
+      default:
+        levelNode.level = 0;
+    }
+    List<SkillNodeModel> updatedNodes = [];
+    for (SkillNodeModel node in currentTree.nodes) {
+      if (node.id != event.nodeId) {
+        updatedNodes.add(node);
+      }
+    }
+    updatedNodes.add(levelNode);
+    currentTree.nodes = updatedNodes;
+
+    // Unlock logic (example: if parent is leveled up, children could unlock)
+    // For now, we just save the level
+    await repository.saveTree(currentTree);
+    emit(SkillTreeState(activeTree: currentTree));
+  }
+
+  Future<void> onRenameNode(
+    RenameNode event,
+    Emitter<SkillTreeState> emit,
+  ) async {
+    final SkillTreeModel currentTree = state.activeTree!;
+
+    final updatedNodes = currentTree.nodes.map((node) {
+      if (node.id == event.nodeId) {
+        node.title = event.newTitle;
+      }
+      return node;
+    }).toList();
+
+    currentTree.nodes = updatedNodes;
+
+    await repository.saveTree(currentTree);
+
+    emit(
+      SkillTreeState(
+        activeTree: currentTree,
+        status: SkillTreeStateStatus.loaded,
+      ),
+    );
+  }
+
   Future<void> onDeleteNode(
     DeleteNode event,
     Emitter<SkillTreeState> emit,
@@ -119,7 +206,14 @@ class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
     //   setState(() => activeTree = null);
     //   return;
     // }
+
     SkillTreeModel? tmpActiveTree = state.activeTree;
+
+    if (nodeId == "root") {
+      repository.deleteTree(tmpActiveTree!.name);
+      emit(SkillTreeState(activeTree: null));
+      return;
+    }
 
     Future<void> deleteNode(String nodeId) async {
       if (nodeId == "") return;
@@ -145,6 +239,7 @@ class SkillTreeBloc extends Bloc<SkillTreeEvent, SkillTreeState> {
     }
 
     await deleteNode(nodeId);
+
     emit(SkillTreeState(activeTree: tmpActiveTree));
     add(RealignTree());
   }

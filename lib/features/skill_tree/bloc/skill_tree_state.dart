@@ -1,4 +1,4 @@
-import 'package:libre_skill_tree/features/skill_tree/data/skill_tree_model.dart';
+import 'package:libre_skill_tree/features/skill_tree/models/skill_tree_model.dart';
 
 enum SkillTreeStateStatus { initial, loading, loaded, error }
 
